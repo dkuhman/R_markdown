@@ -1,0 +1,66 @@
+---
+title: "Static Markup"
+author: "Daniel Kuhman"
+date: "May 28, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!-- Comment syntax in markdown -->
+
+<!-- You can use **Your text** to add bold face -->
+# **Exploring NHL Data with R Markdown**
+
+<!-- You can R chunks with the following syntax; set echo=FALSE to hide the R chunk code when knitting the file-->
+```{r, echo=FALSE, warning=FALSE}
+#Comment syntax within an R chunk is standard R syntax
+#Load data
+mydata_path <- file.choose(new = FALSE)
+mydata <- read.csv(mydata_path)
+rm(mydata_path)
+
+#Tidy data using normal tidyverse functions
+mydata <- mydata %>% 
+  select(Season, Player, Age, Tm, Pos, GP, G, A, PIM) %>% 
+  filter(Season == 2018)
+mydata$G<-as.numeric(mydata$G)
+```
+
+<!-- You can add horizontal rules using *** -->
+***
+
+## Goals scored by team in the 2018 season
+Boxplot representing goals scored per player per team in the 2018 season, ordered by median goals scored. Unsurprisingly, Tampa Bay, Las Vegas, and Winnipeg are all near the top (These teams all participated in the 2018 Conference finals). Surprisingly, Washington (the fourth team participating in the Conference finals and eventual Stenley Cup champions) fall near the bottom of the rankings, suggesting they had few players with high goal counts. 
+
+```{r echo=FALSE, warning=FALSE}
+#Plot 
+ggplot(mydata, aes(x=reorder(Tm, G, FUN=median), y=G, fill=Tm))+
+  geom_boxplot(color='#000000', lwd=0.5)+
+  geom_point(pch=21, position = position_jitterdodge())+
+  xlab('Team')+
+  ylab('Goals Scored')+
+  coord_flip()+
+  ylim(0,90)+
+  theme_classic()+
+  theme(
+    legend.position = 'none',
+    axis.line = element_line(size=1),
+    axis.title.x = element_text(size=20, face='bold',
+                                margin = margin(t=20,r=0,b=0,l=0)),
+    axis.title.y = element_text(size=20, face='bold',
+                                margin = margin(t=0,r=20,b=0,l=0)),
+    axis.text = element_text(size=10)
+  )
+```
+
+
+
+
+
+
+
