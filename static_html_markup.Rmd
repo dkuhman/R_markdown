@@ -57,10 +57,3 @@ ggplot(mydata, aes(x=reorder(Tm, G, FUN=median), y=G, fill=Tm))+
     axis.text = element_text(size=10)
   )
 ```
-
-
-
-
-
-
-
