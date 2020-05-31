@@ -3,6 +3,7 @@ title: "Shiny App Example"
 author: "Daniel Kuhman"
 date: "May 29, 2020"
 output: html_document
+runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
@@ -11,4 +12,67 @@ library(ggplot2)
 library(shiny)
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+<!-- Load and tidy data -->
+```{r echo=FALSE, warning=FALSE}
+mydata_path <- file.choose(new = FALSE)
+mydata <- read.csv(mydata_path)
+rm(mydata_path)
+
+#Tidy data using normal tidyverse functions
+mydata <- mydata %>% 
+  select(Season, Player, Age, Tm, Pos, GP, G, A, PIM)
+mydata$Season<-as.factor(mydata$Season)
+mydata$Player<-as.factor(mydata$Player)
+mydata$Age<-as.numeric(mydata$Age)
+mydata$Tm<-as.factor(mydata$Tm)
+mydata$GP<-as.numeric(mydata$GP)
+mydata$G<-as.numeric(as.character(mydata$G))
+mydata$A<-as.numeric(mydata$A)
+mydata$PIM<-as.numeric(mydata$PIM)
+```
+
+# **Interactive Exploration of NHL Data**
+```{r select-input, echo=FALSE, warning=FALSE}
+#Create panel for team and season
+inputPanel(
+  selectInput("Team", label = "Team:",
+              choices = unique(mydata$Tm)
+              ),
+  renderUI({selectInput("Year", label = "Season:",
+                      choices = unique(mydata$Season[mydata$Tm==input$Team]))
+    }
+  )
+)
+
+#Plot based on input
+renderPlot({
+  plot_data<- mydata %>% 
+  filter(Tm == input$Team & Season == input$Year)
+  plot_data$G[is.na(plot_data$G)]<-0
+  
+  ggplot(plot_data, aes(x=reorder(Player, G), y = G))+
+    geom_point(aes(color=Player), size = 6)+
+    geom_segment(aes(x=Player, xend=Player, y=0, yend=G,color=Player))+
+    coord_flip()+
+    xlab('Plyaer')+
+    ylab('Goals Scored')+
+    theme_classic()+
+    theme(
+      legend.position = 'none',
+      axis.title.x = element_text(size=20, face='bold',
+                                   margin=margin(t=25,r=0,b=0,l=0)),
+      axis.title.y = element_text(size=20, face='bold',
+                                   margin=margin(t=0,r=25,b=0,l=0)),
+      axis.text = element_text(size=12)
+    )
+  }
+)  
+```
+
+
+
+
+
+
 
