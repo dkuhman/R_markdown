@@ -30,9 +30,15 @@ mydata$GP<-as.numeric(mydata$GP)
 mydata$G<-as.numeric(as.character(mydata$G))
 mydata$A<-as.numeric(mydata$A)
 mydata$PIM<-as.numeric(mydata$PIM)
+
+mydata$GP[is.na(mydata$GP)]<-0
+mydata$G[is.na(mydata$G)]<-0
+mydata$A[is.na(mydata$A)]<-0
 ```
 
 # **Interactive Exploration of NHL Data**
+
+##Team Data
 ```{r select-input, echo=FALSE, warning=FALSE}
 #Create panel for team and season
 inputPanel(
@@ -49,7 +55,6 @@ inputPanel(
 renderPlot({
   plot_data<- mydata %>% 
   filter(Tm == input$Team & Season == input$Year)
-  plot_data$G[is.na(plot_data$G)]<-0
   
   ggplot(plot_data, aes(x=reorder(Player, G), y = G))+
     geom_point(aes(color=Player), size = 6)+
@@ -70,7 +75,36 @@ renderPlot({
 )  
 ```
 
+##Individual Player Data
+```{r echo=FALSE}
+renderUI({
+ inputPanel(selectInput("Player", label="Player:",
+                        choices=unique(mydata$Player[mydata$Tm==input$Team &
+                                                   mydata$Season==input$Year]))
+            )
+})
 
+renderPlot({
+  player_plot_data<-mydata %>% 
+    filter(Player == input$Player)
+  
+  ggplot(player_plot_data, aes(x=Season, y=G))+
+    geom_point(size=6, color='#000066')+
+    geom_line(aes(group=Player), size=2, color='#000066')+
+    xlab('Season')+
+    ylab('Goals Scored')+
+    theme_classic()+
+    theme(
+      legend.position = 'none',
+      axis.title.x = element_text(size=20, face='bold',
+                                   margin=margin(t=25,r=0,b=0,l=0)),
+      axis.title.y = element_text(size=20, face='bold',
+                                   margin=margin(t=0,r=25,b=0,l=0)),
+      axis.text = element_text(size=12)
+    )
+})
+
+```
 
 
 
