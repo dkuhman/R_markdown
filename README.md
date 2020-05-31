@@ -9,4 +9,4 @@ This repository hosts R scripts that provide examples for R markdown and R shiny
 ---
 
 ## Shniy Apps for Interactive HTML
-`shiny_html_markup.Rmd`: This R Markdown Shiny App provides a simple example of an interactive HTML file. It includes simple text markup, examples of R chunks that load data, tidy data, provide user interactivity (e.g., dropdown list selections), and plot data. The script uses the data file `skater_stats.csv` and produces `shiny_html_markup.html`.
+`shiny_html_markup.Rmd`: This R Markdown Shiny App provides a simple example of an interactive HTML file. It includes simple text markup, examples of R chunks that load data, tidy data, provide user interactivity (e.g., dropdown list selections), and plot data. The script uses the data file `skater_stats.csv`.
